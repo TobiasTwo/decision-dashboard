@@ -5,7 +5,6 @@ Ce projet est une application web développée avec React et Vite, permettant au
 ## Fonctionnalités
 
 - Affichage d'une liste de décisions avec des détails.
-- Recherche de décisions par titre ou description.
 - Affichage des détails d'une décision sélectionnée.
 - Possibilité d'approuver ou de rejeter une décision.
 
