@@ -1,8 +1,26 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './components/Auth/Login';
+import DataScientistDashboard from './components/Dashboard/DataScientistDashboard';
+import ChiefDashboard from './components/Dashboard/ChiefDashboard';
 import Navbar from './components/Navbar';
 import DecisionList from './components/DecisionList';
 import DecisionDetail from './components/DecisionDetail';
 import { DecisionProvider } from './context/DecisionContext';
+
+const PrivateRoute = ({ children, allowedRoles }) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
 
 function App() {
   return (
@@ -12,7 +30,24 @@ function App() {
           <Navbar />
           <div className="container mx-auto py-8 px-4">
             <Routes>
-              <Route path="/" element={<DecisionList />} />
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/dashboard/data-scientist"
+                element={
+                  <PrivateRoute allowedRoles={['dataScientist']}>
+                    <DataScientistDashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dashboard/chief"
+                element={
+                  <PrivateRoute allowedRoles={['chiefDataScientist']}>
+                    <ChiefDashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/" element={<Navigate to="/login" />} />
               <Route path="/decision/:id" element={<DecisionDetail />} />
             </Routes>
           </div>
