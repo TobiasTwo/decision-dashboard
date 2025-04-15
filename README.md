@@ -1,53 +1,133 @@
 # Decision Dashboard
 
-Ce projet est une application web développée avec React et Vite, permettant aux utilisateurs de visualiser et de gérer des décisions. Les utilisateurs peuvent consulter une liste de décisions, voir les détails de chaque décision, et approuver ou rejeter des décisions.
+Une application web pour la gestion des décisions basées sur les données, permettant aux Data Scientists et Chief Data Scientists de collaborer efficacement.
 
 ## Fonctionnalités
 
-- Affichage d'une liste de décisions avec des détails.
-- Affichage des détails d'une décision sélectionnée.
-- Possibilité d'approuver ou de rejeter une décision.
+### Authentification
+- Système de connexion avec deux rôles distincts :
+  - Data Scientist
+  - Chief Data Scientist
+- Protection des routes en fonction du rôle de l'utilisateur
+- Stockage local des informations d'authentification
+
+### Interface Data Scientist
+- Formulaire pour ajouter de nouvelles décisions avec :
+  - Titre de la décision
+  - Description détaillée
+  - Upload d'images (support pour JPG et PNG)
+  - Prévisualisation de l'image
+  - Bouton dédié pour l'ajout d'image
+  - Possibilité de supprimer l'image sélectionnée
+- Stockage local des données
+- Interface intuitive et moderne
+
+### Interface Chief Data Scientist
+- Visualisation des décisions en attente avec :
+  - Titre et description
+  - Image associée
+  - Formulaire pour prendre une décision finale
+  - Option d'approbation/rejet
+  - Badge visuel indiquant le statut (approuvé/rejeté)
+- Historique des décisions prises avec :
+  - Date de prise de décision
+  - Décision finale détaillée
+  - Statut d'approbation
+  - Image associée
+
+## Structure du Projet
+
+```
+decision-dashboard/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── Auth/
+│   │   │   └── Login.jsx
+│   │   └── Dashboard/
+│   │       ├── DataScientistDashboard.jsx
+│   │       └── ChiefDashboard.jsx
+│   ├── context/
+│   ├── assets/
+│   ├── api/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── package.json
+├── tailwind.config.cjs
+└── vite.config.js
+```
 
 ## Technologies Utilisées
 
-- **React** : Bibliothèque JavaScript pour construire des interfaces utilisateur.
-- **Vite** : Outil de construction rapide pour les projets modernes.
-- **Tailwind CSS** : Framework CSS pour un design réactif et moderne.
-- **React Router** : Pour la gestion de la navigation dans l'application.
+- React
+- React Router pour la navigation
+- Tailwind CSS pour le styling
+- Vite comme bundler
+- LocalStorage pour le stockage des données (en développement)
 
 ## Installation
 
-1. Clonez le dépôt :
+1. Cloner le repository :
+```bash
+git clone [URL_DU_REPO]
+```
 
-   ```bash
-   git clone https://github.com/votre-utilisateur/decision-dashboard.git
-   cd decision-dashboard
-   ```
+2. Installer les dépendances :
+```bash
+npm install
+```
 
-2. Installez les dépendances :
+3. Lancer l'application en mode développement :
+```bash
+npm run dev
+```
 
-   ```bash
-   npm install
-   ```
+## Fonctionnement
 
-3. Démarrez le serveur de développement :
+1. **Connexion**
+   - Les utilisateurs se connectent en choisissant leur rôle
+   - Le système redirige vers le dashboard approprié
 
-   ```bash
-   npm run dev
-   ```
+2. **Data Scientist**
+   - Peut ajouter de nouvelles décisions
+   - Peut inclure des images pour illustrer ses analyses
+   - Peut voir l'historique de ses soumissions
 
-4. Ouvrez votre navigateur et accédez à `http://localhost:3000` pour voir l'application en action.
+3. **Chief Data Scientist**
+   - Consulte les décisions en attente
+   - Prend des décisions finales détaillées
+   - Approuve ou rejette les propositions
+   - Consulte l'historique des décisions prises
 
-## Utilisation
+## Préparation pour l'Intégration Future
 
-- **Liste des décisions** : Vous verrez une liste de décisions avec des titres et des descriptions. Vous pouvez rechercher des décisions en utilisant la barre de recherche.
-- **Détails de la décision** : Cliquez sur une décision pour voir ses détails, y compris son statut, sa description et ses métriques.
-- **Approuver ou rejeter** : Si une décision est en attente, vous pouvez l'approuver ou la rejeter en utilisant les boutons correspondants.
+L'application est conçue pour faciliter l'intégration future avec :
 
-## Auteurs
+### Base de Données
+- Structure prête pour l'ajout d'une API REST
+- Compatible avec PostgreSQL ou MongoDB
+- Prête pour l'implémentation de JWT
 
-- [TobiasTwo](https://github.com/TobiasTwo)
+### Stockage des Images
+- Architecture prête pour l'intégration avec des services cloud (AWS S3, Google Cloud Storage)
+- Support pour la compression et l'optimisation des images
+- Gestion des permissions d'accès
 
-## License
+### API
+- Structure modulaire pour l'ajout d'endpoints RESTful
+- Prête pour la validation des données
+- Support pour la pagination et le filtrage
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+## Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+1. Fork le projet
+2. Créer une branche pour votre fonctionnalité
+3. Commiter vos changements
+4. Pousser vers la branche
+5. Ouvrir une Pull Request
+
+## Licence
+
+Ce projet est sous licence MIT.
