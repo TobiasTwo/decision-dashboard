@@ -32,17 +32,17 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route
-                path="/dashboard/data-scientist"
+                path="/data-scientist"
                 element={
-                  <PrivateRoute allowedRoles={['dataScientist']}>
+                  <PrivateRoute allowedRoles={['data_scientist']}>
                     <DataScientistDashboard />
                   </PrivateRoute>
                 }
               />
               <Route
-                path="/dashboard/chief"
+                path="/chief"
                 element={
-                  <PrivateRoute allowedRoles={['chiefDataScientist']}>
+                  <PrivateRoute allowedRoles={['chief_data_scientist']}>
                     <ChiefDashboard />
                   </PrivateRoute>
                 }
