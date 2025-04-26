@@ -6,6 +6,8 @@ const DataScientistDashboard = () => {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
@@ -22,25 +24,62 @@ const DataScientistDashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Pour le développement local, nous stockons les données dans le localStorage
-    const decisions = JSON.parse(localStorage.getItem('decisions') || '[]');
-    const newDecision = {
-      id: Date.now(),
-      title,
-      description,
-      image: preview,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-    };
-    
-    localStorage.setItem('decisions', JSON.stringify([...decisions, newDecision]));
-    
-    // Réinitialiser le formulaire
-    setTitle('');
-    setDescription('');
-    setImage(null);
-    setPreview('');
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      if (image) {
+        formData.append('image', image);
+      }
+      
+      // Récupérer l'utilisateur depuis le localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user?.id || 1; // Utiliser 1 comme valeur par défaut si l'ID n'est pas disponible
+
+      // Construire l'URL avec les paramètres en utilisant le proxy
+      const url = `/api/v1/decision?description=${encodeURIComponent(description)}&userId=${userId}`;
+      console.log('Envoi de la requête à:', url);
+      console.log('Données du formulaire:', {
+        description,
+        userId,
+        hasImage: !!image
+      });
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'accept': '*/*',
+        },
+        body: formData
+      });
+
+      console.log('Statut de la réponse:', response.status);
+      console.log('En-têtes de la réponse:', Object.fromEntries(response.headers.entries()));
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Réponse d\'erreur:', errorText);
+        throw new Error(`Erreur HTTP: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Décision créée:', data);
+
+      // Réinitialiser le formulaire
+      setTitle('');
+      setDescription('');
+      setImage(null);
+      setPreview('');
+
+      // Afficher un message de succès ou rediriger
+      alert('Décision créée avec succès!');
+    } catch (err) {
+      console.error('Erreur détaillée:', err);
+      setError(`Une erreur est survenue lors de la création de la décision: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
@@ -72,21 +111,12 @@ const DataScientistDashboard = () => {
         <div className="px-4 py-6 sm:px-0">
           <div className="bg-white shadow rounded-lg p-6">
             <h2 className="text-lg font-medium text-gray-900 mb-4">Ajouter une nouvelle décision</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-                  Titre
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                  required
-                />
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-700">{error}</p>
               </div>
-
+            )}
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                   Description
@@ -98,6 +128,7 @@ const DataScientistDashboard = () => {
                   rows={4}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   required
+                  placeholder="Décrivez votre décision..."
                 />
               </div>
 
@@ -144,9 +175,12 @@ const DataScientistDashboard = () => {
 
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={isSubmitting}
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
+                  isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
               >
-                Soumettre la décision
+                {isSubmitting ? 'Envoi en cours...' : 'Soumettre la décision'}
               </button>
             </form>
           </div>
