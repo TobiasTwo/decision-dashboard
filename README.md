@@ -1,39 +1,38 @@
 # Decision Dashboard
 
-Une application web pour la gestion des décisions basées sur les données, permettant aux Data Scientists et Chief Data Scientists de collaborer efficacement.
+Une application web pour la gestion des décisions basée sur les données, permettant aux Data Scientists et Chief Data Scientists de collaborer efficacement.
 
 ## Fonctionnalités
 
-### Authentification
-- Système de connexion avec deux rôles distincts :
-  - Data Scientist
-  - Chief Data Scientist
-- Protection des routes en fonction du rôle de l'utilisateur
-- Stockage local des informations d'authentification
+### Authentification locale
+- Système de connexion sécurisé via une base locale (localStorage)
+- Deux utilisateurs par défaut :
+  - **Data Scientist** :
+    - Nom d'utilisateur : `data_scientist`
+    - Mot de passe : `password123`
+  - **Chief Data Scientist** :
+    - Nom d'utilisateur : `chief`
+    - Mot de passe : `password123`
+- Les rôles sont automatiquement détectés à la connexion (plus de sélection manuelle)
+- Les routes sont protégées selon le rôle
+- Pas de page de création de compte (utilisateurs créés automatiquement au premier lancement)
 
 ### Interface Data Scientist
 - Formulaire pour ajouter de nouvelles décisions avec :
-  - Titre de la décision
   - Description détaillée
-  - Upload d'images (support pour JPG et PNG)
+  - Upload d'images (JPG, PNG)
   - Prévisualisation de l'image
   - Bouton dédié pour l'ajout d'image
   - Possibilité de supprimer l'image sélectionnée
-- Stockage local des données
+- Les décisions sont envoyées à l'API externe
 - Interface intuitive et moderne
 
 ### Interface Chief Data Scientist
-- Visualisation des décisions en attente avec :
-  - Titre et description
-  - Image associée
-  - Formulaire pour prendre une décision finale
-  - Option d'approbation/rejet
-  - Badge visuel indiquant le statut (approuvé/rejeté)
-- Historique des décisions prises avec :
-  - Date de prise de décision
-  - Décision finale détaillée
-  - Statut d'approbation
-  - Image associée
+- Visualisation des décisions en attente (récupérées via l'API)
+- Affichage de la description et de l'image (base64)
+- Formulaire pour écrire une décision finale
+- Enregistrement de la décision finale via l'API externe
+- Historique des décisions traitées
 
 ## Structure du Projet
 
@@ -50,11 +49,16 @@ decision-dashboard/
 │   ├── context/
 │   ├── assets/
 │   ├── api/
+│   ├── db/
+│   │   └── database.js
+│   ├── services/
+│   │   └── authService.js
 │   ├── App.jsx
 │   ├── main.jsx
 │   └── index.css
 ├── package.json
 ├── tailwind.config.cjs
+├── postcss.config.cjs
 └── vite.config.js
 ```
 
@@ -64,7 +68,8 @@ decision-dashboard/
 - React Router pour la navigation
 - Tailwind CSS pour le styling
 - Vite comme bundler
-- LocalStorage pour le stockage des données (en développement)
+- localStorage pour l'authentification locale
+- API externe pour la gestion des décisions
 
 ## Installation
 
@@ -86,38 +91,25 @@ npm run dev
 ## Fonctionnement
 
 1. **Connexion**
-   - Les utilisateurs se connectent en choisissant leur rôle
-   - Le système redirige vers le dashboard approprié
+   - Utilisez l'un des deux comptes par défaut :
+     - Data Scientist : `data_scientist` / `password123`
+     - Chief Data Scientist : `chief` / `password123`
+   - Le système redirige automatiquement vers le dashboard approprié selon le rôle
 
 2. **Data Scientist**
-   - Peut ajouter de nouvelles décisions
-   - Peut inclure des images pour illustrer ses analyses
-   - Peut voir l'historique de ses soumissions
+   - Peut ajouter de nouvelles décisions (description + image)
+   - Les décisions sont envoyées à l'API externe
 
 3. **Chief Data Scientist**
-   - Consulte les décisions en attente
-   - Prend des décisions finales détaillées
-   - Approuve ou rejette les propositions
-   - Consulte l'historique des décisions prises
+   - Consulte les décisions en attente (récupérées via l'API)
+   - Prend une décision finale (texte libre)
+   - Enregistre la décision finale via l'API externe
 
-## Préparation pour l'Intégration Future
+## Sécurité
 
-L'application est conçue pour faciliter l'intégration future avec :
-
-### Base de Données
-- Structure prête pour l'ajout d'une API REST
-- Compatible avec PostgreSQL ou MongoDB
-- Prête pour l'implémentation de JWT
-
-### Stockage des Images
-- Architecture prête pour l'intégration avec des services cloud (AWS S3, Google Cloud Storage)
-- Support pour la compression et l'optimisation des images
-- Gestion des permissions d'accès
-
-### API
-- Structure modulaire pour l'ajout d'endpoints RESTful
-- Prête pour la validation des données
-- Support pour la pagination et le filtrage
+- Les mots de passe sont stockés de façon hachée (SHA256) dans le localStorage
+- Les routes sont protégées selon le rôle de l'utilisateur
+- Les identifiants par défaut sont créés automatiquement si la base locale est vide
 
 ## Contribution
 
