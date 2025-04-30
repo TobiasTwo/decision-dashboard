@@ -36,6 +36,7 @@ const DataScientistDashboard = () => {
       // Récupérer l'utilisateur depuis le localStorage
       const user = JSON.parse(localStorage.getItem('user'));
       const userId = user?.id || 1; // Utiliser 1 comme valeur par défaut si l'ID n'est pas disponible
+      console.log(userId);
 
       // Construire l'URL avec les paramètres en utilisant le proxy
       const url = `/api/v1/decision?description=${encodeURIComponent(description)}&userId=${userId}`;

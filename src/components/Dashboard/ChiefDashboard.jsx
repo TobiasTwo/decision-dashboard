@@ -9,6 +9,8 @@ const ChiefDashboard = () => {
   const [finalDecision, setFinalDecision] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   useEffect(() => {
     fetchDecisions();
@@ -21,7 +23,7 @@ const ChiefDashboard = () => {
       
       // Récupérer l'utilisateur depuis le localStorage
       const user = JSON.parse(localStorage.getItem('user'));
-      const userId = user?.id || 1; // Utiliser 1 comme valeur par défaut si l'ID n'est pas disponible
+      const userId = /*user?.id ||*/ 1; // Utiliser 1 comme valeur par défaut si l'ID n'est pas disponible
       
       const response = await fetch(`/api/v1/decision/user/${userId}`, {
         method: 'GET',
@@ -203,7 +205,8 @@ const ChiefDashboard = () => {
                           <img
                             src={selectedDecision.imageUrl}
                             alt="Décision"
-                            className="max-h-64 w-auto mx-auto"
+                            onClick={() => setIsModalOpen(true)}
+                            className="max-h-64 w-auto mx-auto cursor-zoom-in transition-transform hover:scale-105"
                           />
                         </div>
                       </div>
@@ -263,7 +266,20 @@ const ChiefDashboard = () => {
           )}
         </div>
       </main>
+          {isModalOpen && (
+      <div
+        className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+        onClick={() => setIsModalOpen(false)}
+      >
+        <img
+          src={selectedDecision.imageUrl}
+          alt="Image agrandie"
+          className="max-h-[90%] max-w-[90%] object-contain rounded shadow-lg"
+        />
+      </div>
+    )}
     </div>
+    
   );
 };
 
