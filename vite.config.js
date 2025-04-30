@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://dss-bqanabcpg4erf8hz.francecentral-01.azurewebsites.net',
+        //target: 'https://dss-bqanabcpg4erf8hz.francecentral-01.azurewebsites.net',
+        target : 'http://localhost:9090',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         secure: false,
